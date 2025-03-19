@@ -40,24 +40,34 @@ class WebServer:
                 if request == '/toggle':
                     print("Toggle LED")
                     self.pico.toggle_led()
-                    response = 'HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n'
-                elif request == '/get-temp':
+                    response_code = '200 OK'
+                    response_body = 'LED toggled'
+                elif request == '/temp':
                     print("Read temperature from Pico")
                     tempC = self.pico.read_internal_temperature()
-                    print(f"Current temperature: {tempC}")
-                    response = 'HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n'
+                    response_code = '200 OK'
+                    response_body = f"Temperature: {tempC}"
+                    print(response_body)
                 elif request == '/value':
                     random_value = random.randint(0, 20)
-                    print(f'Random Value: {random_value}')
-                    response = 'HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n'
+                    response_code = '200 OK'
+                    response_body = f"Random value: {random_value}"
+                    print(response_body)
+                else:
+                    response_body = "Not Found"
+                    response_code = "404 Not Found"
+                    
     
                 # Send the HTTP response and close the connection
+                response = f'HTTP/1.1 {response_code}\r\nContent-type: text/plain\r\n\r\n{response_body}'
                 conn.send(response)
                 conn.close()
 
             except OSError as e:
                 conn.close()
                 print('Connection closed')
+
+
 
 
 
